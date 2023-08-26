@@ -1,0 +1,40 @@
+body {
+	font-family: sans-serif;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	--color1: lightyellow;
+	background-color: var(--color1);
+}
+
+h1 {
+	font-style: "Gluten";
+	font-size: 4rem;
+}
+
+.grid {
+	display: grid;
+	grid-template: repeat(3, 8rem) / repeat(3, 8rem);
+	gap: 3px;
+	
+	background-color: black;
+}
+
+.grid > div {
+	background-color: var(--color1);
+
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.grid p {
+	font-size: 5rem;
+}
+
+.log {
+	width: min(100%, 50ch);
+}
+
