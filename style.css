@@ -4,7 +4,7 @@ body {
 	flex-direction: column;
 	align-items: center;
 
-	--color1: lightyellow;
+	--color1: rgb(237, 237, 191);
 	background-color: var(--color1);
 }
 
@@ -32,6 +32,16 @@ h1 {
 
 .grid p {
 	font-size: 5rem;
+}
+
+#reset-btn {
+	font-size: 1.5rem;
+	padding: 1rem 2rem;
+	border-radius: 3rem;
+	margin: 2rem;
+
+	background-color: rgb(215, 177, 255);
+	border: 1px solid --color1;
 }
 
 .log {
