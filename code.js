@@ -1,15 +1,11 @@
-function selectCell () {
-	game.currentTurn.makeMove(this);
-}
-
-function player (name, sign) {
-	function makeMove(cell) {
+const player = (name, sign) => {
+	const  makeMove = (cell) => {
 		if(!cell.hasChildNodes()) {
 			let p = document.createElement("p");
 			p.textContent = sign;
 			cell.appendChild(p);
 
-			gameboard.occupyCell(cell);
+			gameboard.occupyCell(cell, sign);
 			game.checkIfWon(sign);
 			
 			game.changeTurn();
@@ -21,31 +17,33 @@ function player (name, sign) {
 		}
 	}
 
-	function win() {
+	const win = () => {
 		return `${name} won!`
 	}
 
 	return {name, sign, makeMove, win}
 }
 
-user = player("user", "X");
+const user = player("user", "X");
 
-computer = function(pName, pSign) {
+const computer = function(pName, pSign) {
 
-	let {name, sign, makeMove, win} = player(pName, pSign)
-	function chooseMove() {
-		chosenCell = Math.floor(Math.random()*gameboard.emptyCells.length)
-		console.log(chosenCell + " chooseMove");
+	const {name, sign, makeMove, win} = player(pName, pSign)
+
+	const chooseMove = () => {
+		let emptyCells = gameboard.returnCells("");
+
+		chosenCell = Math.floor(Math.random() * emptyCells.length)
 		makeMove(emptyCells[chosenCell]);
 	}	
 
 	return {name, sign, makeMove, win, chooseMove}
 }("computer", "O");
 
-let game = function () {
+const game = function() {
 	let currentTurn = user;
 
-	function changeTurn () {
+	const changeTurn = () => {
 		if (currentTurn === user){
 			currentTurn = computer;
 			computer.chooseMove();
@@ -54,30 +52,50 @@ let game = function () {
 			currentTurn = user;
 	}
 
-	function checkIfWon() {
+	const checkIfWon = () => {
 		/* console.log("win WIP") */
 	}
 
 	return {currentTurn, changeTurn, checkIfWon}
 }();
 
-let gameboard = function() {
-	allCells = document.querySelectorAll(".grid > div")
-	emptyCells = [...allCells]
+const gameboard = function() {
+	const allCells = document.querySelectorAll(".grid > div");
+	let cells = {};
+	allCells.forEach(cell => cells[cell.dataset.xy] = "");
 
-	let removedCells;
-
-	function occupyCell(cellToRemove) {
-		console.log(cellToRemove.dataset.xy + " removed");
-		newEmptyCells = emptyCells.filter(cell => 
-			cell.dataset.xy !== cellToRemove.dataset.xy);
-		emptyCells = newEmptyCells;
+	const occupyCell = (cell, sign) => {
+		cells[cell.dataset.xy] = sign;
 	}
 
-	resetEmpty = () => emptyCells = [...allCells];
+	const returnCellsCoordinates = sign => {
+		let cellsCoordinatesArray = [];
 
-	return {emptyCells, occupyCell, resetEmpty, removedCells};
+		for(cell of Object.keys(cells)) {
+			if(cells[cell] === sign)
+				cellsCoordinatesArray.push(cell);
+		}
+		return cellsCoordinatesArray;
+	}
+
+	const returnCells = (sign) => {
+		let cellsCoordinatesArray = returnCellsCoordinates(sign);
+
+		console.log(cellsCoordinatesArray);
+
+		return [...allCells].filter(cell => 
+			cellsCoordinatesArray.includes(cell.dataset.xy));
+
+	}
+
+	const resetEmpty = () => {
+		let cells = {};
+		allCells.forEach(cell => cells[cell.dataset.xy] = "");
+	}
+
+	return {cells, occupyCell, returnCellsCoordinates, returnCells, resetEmpty};
 }();
 
 document.querySelectorAll(".grid > div").forEach(element => 
-	element.addEventListener("click", selectCell));	
+	element.addEventListener("click", event => 
+		game.currentTurn.makeMove(event.target)));	
